@@ -19,3 +19,16 @@ const setupContactRoutes = require("./app/routes/contact.routes");
 setupContactRoutes(app)
 module.exports = app;
 
+
+const{ BadRequestError, ErrorHandler } = require("./app/errors");
+const errors = require("./app/errors");
+
+
+app.use((req, res , next) => {
+    next(new BadRequestError(404,"Resource not found"));
+});
+
+
+app.use((req, res , next) => {
+   ErrorHandler.handleError(error, res);
+});
