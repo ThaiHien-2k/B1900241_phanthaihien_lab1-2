@@ -8,9 +8,11 @@
   "version": "1.0.0",
   "description": "thuc hanh buoi 1 va 2",
   "main": "index.js",
-  "devDependencies": {},
+  "devDependencies": {
+    "nodemon": "^2.0.15"
+  },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "nodemon server.js"
   },
   "keywords": [],
   "author": "thai hien",
