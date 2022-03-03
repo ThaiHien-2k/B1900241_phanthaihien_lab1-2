@@ -16,7 +16,7 @@ app.get("/",(rep, res) => {
 
 
 const setupContactRoutes = require("./app/routes/contact.routes");
-setupContactRoutes(app)
+setupContactRoutes(app);
 module.exports = app;
 
 

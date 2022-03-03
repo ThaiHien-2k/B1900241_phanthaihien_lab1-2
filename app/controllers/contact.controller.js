@@ -1,29 +1,32 @@
-const { handle } = require("express/lib/application");
+// const { handle } = require("express/lib/application");
 const { BadRequestError } = require("../errors");
+const Contact = require("../models/contact.model");
+const handlePromise = require("../helpers/promise.helper");
+const mongoose = require("mongoose");
 
-exports.create = async(rep,res) => {
-    res.send({ message: "create handler" });
-};
+// exports.create = (rep,res) => {
+//     res.send({ message: "create handler" });
+// };
 
-exports.findALL = async(rep,res) => {
-    res.send({ message: "findALL handler" });
-};
+// exports.findALL = (rep,res) => {
+//     res.send({ message: "findALL handler" });
+// };
 
-exports.findONE = async(rep,res) => {
-    res.send({ message: "findOne handler" });
-};
+// exports.findONE = (rep,res) => {
+//     res.send({ message: "findOne handler" });
+// };
 
-exports.update = async(rep,res) => {
-    res.send({ message: "update handler" });
-};
+// exports.update = (rep,res) => {
+//     res.send({ message: "update handler" });
+// };
 
-exports.delete = async(rep,res) => {
-    res.send({ message: "delete handler" });
-};
+// exports.delete = (rep,res) => {
+//     res.send({ message: "delete handler" });
+// };
 
-exports.deleteALL = async(rep,res) => {
-    res.send({ message: "deleteALL handler" });
-};
+// exports.deleteALL = (rep,res) => {
+//     res.send({ message: "deleteALL handler" });
+// };
 
 
 exports.create = async (req , res ,next) =>{
@@ -36,13 +39,14 @@ exports.create = async (req , res ,next) =>{
         email: req.body.email,
         address: req.body.address,
         phone: req.body.phone,
-        favorite: String(req.body.favorite).toLowerCase() === "true",
+        favorite: req.body.favorite === true,
     });
 
     const [error, document] = await handlePromise(contact.save());
 
     if(error) {
-        return next(new BadRequestError(500, "An error occurred while creating the contact"));
+        return next(new BadRequestError(500, 
+            "An error occurred while creating the contact"));
     }
     return res.send(document);
 };
@@ -50,7 +54,7 @@ exports.create = async (req , res ,next) =>{
 
 exports.findALL = async(req, res ,next) =>{
    const condition = { };
-   const name = req.query.name;
+   const name = req.query;
    if(name){
        condition.name = { $regex: new RegExp(name), $options: "i"};
    } 
@@ -65,7 +69,10 @@ exports.findALL = async(req, res ,next) =>{
 
 
 exports.findONE = async(req, res ,next) =>{
-    const condition = { _id: req.params.id, };
+    const {id} = req.params;
+    const condition = { 
+        _id: id && mongoose.isValidObjectId(id) ? id : null,
+     };
    
     const[error, document] = await handlePromise(Contact.findONE(condition));
 
@@ -81,12 +88,17 @@ exports.findONE = async(req, res ,next) =>{
  };
 
  exports.update = async(req, res ,next) =>{
+    if(Object.keys(req.body).length ===0){
+        return next(new BadRequestError(400,"data to update can not be empty"));
 
-    if(!req.body) {
-        return next(new BadRequestError(400,"Data to update can not be empty")); 
     }
 
-    const condition = { _id: req.params.id, };
+    const{id} = req.params;
+
+    const condition = {
+        _id: id && mongoose.isValidObjectId(id) ? id : null,
+    };
+    
    
     const[error, document] = await handlePromise(Contact.findONEAndUpdate(condition, req.body,{
         new: true,
@@ -126,7 +138,7 @@ exports.findONE = async(req, res ,next) =>{
 
  exports.findALLFavorite = async(req, res ,next) =>{
    
-    const[error, document] = await handlePromise(Contact.find({favorite: TreeWalker,})
+    const[error, document] = await handlePromise(Contact.find({favorite: true,})
     );
 
     
