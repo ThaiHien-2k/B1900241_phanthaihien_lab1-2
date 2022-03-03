@@ -100,7 +100,7 @@ exports.findONE = async(req, res ,next) =>{
     };
     
    
-    const[error, document] = await handlePromise(Contact.findONEAndUpdate(condition, req.body,{
+    const[error, document] = await handlePromise(Contact.findOneAndUpdate(condition, req.body,{
         new: true,
         })
     );
@@ -121,7 +121,7 @@ exports.findONE = async(req, res ,next) =>{
 
     const condition = { _id: req.params.id, };
    
-    const[error, document] = await handlePromise(Contact.findONEAndUpdate(condition)
+    const[error, document] = await handlePromise(Contact.findByIdAndDelete(condition)
     );
 
     
