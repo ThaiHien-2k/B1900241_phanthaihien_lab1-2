@@ -149,7 +149,7 @@ exports.findOne = async(req, res ,next) =>{
  exports.findALLFavorite = async(req, res ,next) =>{
    
     const[error, documents] = await handlePromise(
-        Contact.find({favorite: true,})
+        Contact.find({favorite: true})
     );
 
     
@@ -172,6 +172,9 @@ exports.findOne = async(req, res ,next) =>{
         "An error occurred while removing contacts"));
     }
    return res.send({
-       message: `${data.deleteCount} contacts were daleted successfully`,
+       message: `${data.deletedCount} contacts were daleted successfully`,
    });
  };
+
+
+ 
