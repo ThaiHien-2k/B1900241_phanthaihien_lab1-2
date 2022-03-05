@@ -9,7 +9,7 @@ app.use(express.json());
 
 app.use(express.urlencoded({ extended: true }));
 
-app.get("/",(rep, res) => {
+app.get("/", (req, res) => {
     res.json({ message: "welcome to contact book application."});
 });
 
@@ -20,7 +20,9 @@ setupContactRoutes(app);
 module.exports = app;
 
 
-const{ BadRequestError, ErrorHandler } = require("./app/errors");
+const{ BadRequestError, errorHandler } = require("./app/errors");
+
+
 const errors = require("./app/errors");
 
 
@@ -29,6 +31,6 @@ app.use((req, res , next) => {
 });
 
 
-app.use((req, res , next) => {
-   ErrorHandler.handleError(error, res);
+app.use((err, req, res , next) => {
+   errorHandler.handleError(error, res);
 });

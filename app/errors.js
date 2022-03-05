@@ -24,5 +24,5 @@ class ErrorHandler {
 
 module.exports = {
     BadRequestError,
-    ErrorHandler: new ErrorHandler(),
+    errorHandler: new ErrorHandler(),
 };

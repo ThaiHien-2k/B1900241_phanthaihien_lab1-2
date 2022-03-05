@@ -1,4 +1,4 @@
-// const { handle } = require("express/lib/application");
+const { handle } = require("express/lib/application");
 const { BadRequestError } = require("../errors");
 const Contact = require("../models/contact.model");
 const handlePromise = require("../helpers/promise.helper");
@@ -54,31 +54,33 @@ exports.create = async (req , res ,next) =>{
 
 exports.findALL = async(req, res ,next) =>{
    const condition = { };
-   const name = req.query;
+   const{name}  = req.query;
    if(name){
        condition.name = { $regex: new RegExp(name), $options: "i"};
    } 
 
-   const [error, document] = await handlePromise(Contact.find(condition));
+   const [error, documents] = await handlePromise(Contact.find(condition));
 
    if(error) {
-       return next(new BadRequestError(500,"An error occurred while retrieving contacts"));
+       return next(new BadRequestError(500,
+        "An error occurred while retrieving contacts"));
    }
-   return res.send(document);
+   return res.send(documents);
 };
 
 
-exports.findONE = async(req, res ,next) =>{
+exports.findOne = async(req, res ,next) =>{
     const {id} = req.params;
     const condition = { 
         _id: id && mongoose.isValidObjectId(id) ? id : null,
      };
    
-    const[error, document] = await handlePromise(Contact.findONE(condition));
+    const[error, document] = await handlePromise(Contact.findOne(condition));
 
     
    if(error) {
-    return next(new BadRequestError(500,`error retrieving contact with id=${req.params.id}`));
+    return next(new BadRequestError(500,
+        `error retrieving contact with id=${req.params.id}`));
 }
     if(!document) {
         return next(new BadRequestError(404,"Contact not found"));
@@ -89,7 +91,8 @@ exports.findONE = async(req, res ,next) =>{
 
  exports.update = async(req, res ,next) =>{
     if(Object.keys(req.body).length ===0){
-        return next(new BadRequestError(400,"data to update can not be empty"));
+        return next(new BadRequestError(400,
+            "data to update can not be empty"));
 
     }
 
@@ -100,14 +103,16 @@ exports.findONE = async(req, res ,next) =>{
     };
     
    
-    const[error, document] = await handlePromise(Contact.findOneAndUpdate(condition, req.body,{
+    const[error, document] = await handlePromise(
+        Contact.findOneAndUpdate(condition, req.body,{
         new: true,
         })
     );
 
     
    if(error) {
-    return next(new BadRequestError(500,`error updating contact with id=${req.params.id}`));
+    return next(new BadRequestError(500,
+        `error updating contact with id=${req.params.id}`));
 }
     if(!document) {
         return next(new BadRequestError(404,"Contact not found"));
@@ -118,15 +123,20 @@ exports.findONE = async(req, res ,next) =>{
 
 
  exports.delete = async(req, res ,next) =>{
+    const{id} = req.params;
 
-    const condition = { _id: req.params.id, };
+    const condition = {
+        _id: id && mongoose.isValidObjectId(id) ? id : null,
+    };
    
-    const[error, document] = await handlePromise(Contact.findByIdAndDelete(condition)
+    const[error, document] = await handlePromise(
+        Contact.findOneAndDelete(condition)
     );
 
     
    if(error) {
-    return next(new BadRequestError(500,`could not delete contact with id=${req.params.id}`));
+    return next(new BadRequestError(500,
+        `could not delete contact with id=${req.params.id}`));
 }
     if(!document) {
         return next(new BadRequestError(404,"Contact not found"));
@@ -138,24 +148,28 @@ exports.findONE = async(req, res ,next) =>{
 
  exports.findALLFavorite = async(req, res ,next) =>{
    
-    const[error, document] = await handlePromise(Contact.find({favorite: true,})
+    const[error, documents] = await handlePromise(
+        Contact.find({favorite: true,})
     );
 
     
    if(error) {
-    return next(new BadRequestError(500,"An error occurred while retrieving favorite contacts"));
+    return next(new BadRequestError(500,
+        "An error occurred while retrieving favorite contacts"));
     }
-   return res.send(document);
+   return res.send(documents);
  };
 
  exports.deleteALL = async(req, res ,next) =>{
    
-    const[error, document] = await handlePromise(Contact.deleteMany({ })
+    const[error, data] = await handlePromise(
+        Contact.deleteMany({ })
     );
 
     
    if(error) {
-    return next(new BadRequestError(500,"An error occurred while removing contacts"));
+    return next(new BadRequestError(500,
+        "An error occurred while removing contacts"));
     }
    return res.send({
        message: `${data.deleteCount} contacts were daleted successfully`,

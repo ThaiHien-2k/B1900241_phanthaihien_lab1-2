@@ -1,10 +1,10 @@
-const { default: mongoose } = require("mongoose");
-const mongo = require("mongoose");
+
+const mongoose = require("mongoose");
 const schema = mongoose.Schema(
     {
         name: {
             type: String,
-            required: [true, "contactname is required"],
+            required: [true, "contact name is required"],
         },
         email:{
             type: String,
